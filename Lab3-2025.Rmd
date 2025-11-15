@@ -1,0 +1,17 @@
+---
+title: 'P&S-2025: Lab assignment 3'
+author: "Bohdan Zasymovych, "
+output:
+  html_document:
+    df_print: paged
+---
+
+### Work breakdown:
+
+-   Bohdan Zasymovych: Task 1
+
+# Task 1
+
+# Task 2
+
+# Task 3
