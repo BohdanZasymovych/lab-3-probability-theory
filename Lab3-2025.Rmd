@@ -10,7 +10,377 @@ output:
 
 -   Bohdan Zasymovych: Task 1
 
+```{r}
+options(width = 500)
+id <- 10
+```
+
 # Task 1
+
+## 1)
+
+$$
+\begin{align}
+  &\theta = 1\newline
+  &\lambda = \frac{1}{\theta} = 1
+\end{align}
+$$
+
+$$X_i \sim \mathcal{E}(\lambda)$$
+
+### Statistic:
+
+$$T(\textbf{X}) = 2 \lambda n \overline{\textbf{X}}$$
+
+$$n \overline{\textbf{X}} = n \frac{\sum X_i}{n} = \sum X_i \sim \Gamma(n, \lambda)$$
+
+$$W(\textbf{X}) = n \overline{\textbf{X}} \sim \Gamma(n, \lambda) $$
+
+MGF for Gamma distribution ($\Gamma(n, \lambda)$):
+
+$$M(t) = (\frac{\lambda}{\lambda-t})^n$$
+
+MGF for Chi-squared distribution with $n$ degrees of freedom ($\chi^2_n$):
+
+$$M(t) = (1-2t)^{-\frac{n}{2}}$$
+
+MGF of $T$:
+
+$$M_{2 \lambda W}(2 \lambda t) = (\frac{\lambda}{\lambda-2 \lambda t})^n = (1-2 t)^{-n}$$
+
+So $T$ has Chi-squared distribution with $2n$ degrees of freedom ($T \sim \chi^2_{2n}$)
+
+### Probability:
+
+$$
+\begin{align}
+1 - \alpha &= P\left(x_{\alpha/2} \le T \le x_{1-\alpha/2}\right) =
+P\left(x_{\alpha/2} \le 2 \alpha W \le x_{1-\alpha/2}\right) \newline
+&= P\left(x_{\alpha/2} \le \frac{2W}{\theta} \le x_{1-\alpha/2}\right)
+= P\left(\frac{1}{x_{1-\alpha/2}} \le \frac{\theta}{2W} \le \frac{1}{x_{\alpha/2}}\right) \newline
+&= P\left(\frac{2W}{x_{1-\alpha/2}} \le \theta \le \frac{2W}{x_{\alpha/2}}\right)
+= P\left(\frac{2n \overline{\textbf{X}}}{x_{1-\alpha/2}} \le \theta \le \frac{2n \overline{\textbf{X}}}{x_{\alpha/2}}\right)
+\end{align}
+$$
+
+### Confidence interval of confidence level $1 - \alpha$:
+
+$$ \left[ \frac{2n \overline{\textbf{X}}}{x_{1-\alpha/2}}, \quad \frac{2n \overline{\textbf{X}}}{x_{\alpha/2}} \right]
+$$
+
+Here:
+
+$x_{\alpha}$ - $\alpha$ quantile of $\chi^2_{2n}$
+
+## 2)
+
+$$
+\overline{\textbf{X}} \sim \mathcal{N}(\frac{1}{\lambda}, \frac{1}{n\lambda^2}) \implies \overline{\textbf{X}} \sim \mathcal{N}(\theta, \frac{\theta^2}{n}) 
+$$
+
+$$
+P \left( \frac{\sqrt{n} |\overline{\textbf{X}} - \theta|}{\theta} \le z_\alpha \right) = 2 \alpha - 1
+$$
+
+$$ \begin{align}
+2 \alpha - 1 &= P \left( \frac{\sqrt{n} |\theta - \overline{\textbf{X}}|}{\theta} \le z_\alpha \right) = P \left( |\theta - \overline{\textbf{X}}| \le  \frac{\theta}{\sqrt{n}} z_\alpha \right) \newline
+&= P \left( \overline{\textbf{X}} - \frac{\theta}{\sqrt{n}} z_\alpha \le  \theta \le  \overline{\textbf{X}} +\frac{\theta}{\sqrt{n}} z_\alpha \right)
+\end{align}
+$$
+
+Confidence interval of confidence level $2 \alpha - 1$:
+
+$$
+\left[ \overline{\textbf{X}} - \frac{\theta}{\sqrt{n}} z_\alpha, \; \overline{\textbf{X}} + \frac{\theta}{\sqrt{n}} z_\alpha \right]
+$$
+
+But bounds of this interval for $\theta$ is dependent of $\theta$ itself so it cannot be used in practice.
+
+## 3)
+
+$$
+2 \alpha - 1 = P \left( \frac{\sqrt{n} |\theta - \overline{\textbf{X}}|}{\theta} \le z_\alpha \right) = P \left( |\theta - \overline{\textbf{X}}| \le  \frac{\theta}{\sqrt{n}} z_\alpha \right)
+$$
+
+To find interval for $\theta$ with bounds independent of a parameter we need to solve next inequality:
+
+$$
+|\theta - \overline{\textbf{X}}| \le  \frac{\theta}{\sqrt{n}} z_\alpha
+$$
+
+Upper bound for $\theta$:
+
+$$
+\theta - \frac{\theta}{\sqrt{n}} z_\alpha \le \overline{\textbf{X}} \\
+\theta \left(1 - \frac{z_\alpha}{\sqrt{n}}\right) \le \overline{\textbf{X}} \\
+\theta \le \frac{\overline{\textbf{X}}}{1 - z_\alpha/\sqrt{n}}
+$$
+
+Lower bound for $\theta$:
+
+$$
+\theta + \frac{\theta}{\sqrt{n}} z_\alpha \ge \overline{\textbf{X}} \\
+\theta \left(1 + \frac{z_\alpha}{\sqrt{n}}\right) \ge \overline{\textbf{X}} \\
+\theta \ge \frac{\overline{\textbf{X}}}{1 + z_\alpha/\sqrt{n}}
+$$
+
+Final inequality and probability:
+
+$$\frac{\overline{\textbf{X}}}{1 + z_\alpha/\sqrt{n}} \le \theta \le \frac{\overline{\textbf{X}}}{1 - z_\alpha/\sqrt{n}}$$
+
+$$
+P \left( \frac{\overline{\textbf{X}}}{1 + z_\alpha/\sqrt{n}} \le \theta \le \frac{\overline{\textbf{X}}}{1 - z_\alpha/\sqrt{n}} \right) = 2 \alpha - 1
+$$
+
+Confidence interval of confidence level $2 \alpha - 1$: $$
+\left[ \frac{\overline{\textbf{X}}}{1 + z_\alpha/\sqrt{n}}, \quad \frac{\overline{\textbf{X}}}{1 - z_\alpha/\sqrt{n}} \right]
+$$
+
+
+## 4)
+
+$$
+Sxx := \sum (X_i - \overline{\textbf{X}})^2
+$$
+
+Estimator for the variance of the sample mean $\overline{\textbf{X}}$:
+
+$$
+\frac{Sxx}{n(n-1)}
+$$
+
+Statistic:
+
+$$
+T(\textbf{X}) = \frac{\overline{\textbf{X}} - \theta}{\sqrt{\frac{Sxx}{n(n-1)}}} \sim \mathcal{T}_{n-1}
+$$
+
+Probability:
+
+$$
+\begin{align}
+1 - \alpha &= P \left( t_{\alpha/2} \le \frac{\overline{\textbf{X}} - \theta}{\sqrt{\frac{Sxx}{n(n-1)}}} \le t_{1-\alpha / 2}\right) \newline
+&= P \left( \sqrt{\frac{Sxx}{n(n-1)}} t_{\alpha/2} \le \overline{\textbf{X}} - \theta \le \sqrt{\frac{Sxx}{n(n-1)}} t_{1-\alpha / 2}\right) \newline
+&= P \left( - \overline{\textbf{X}} + \sqrt{\frac{Sxx}{n(n-1)}} t_{\alpha/2} \le - \theta \le - \overline{\textbf{X}} + \sqrt{\frac{Sxx}{n(n-1)}} t_{1-\alpha / 2}\right) \newline
+&= P \left( \overline{\textbf{X}} + \sqrt{\frac{Sxx}{n(n-1)}} t_{\alpha/2} \le \theta \le \overline{\textbf{X}} - \sqrt{\frac{Sxx}{n(n-1)}} t_{\alpha / 2}\right)
+\end{align}
+$$
+
+Confidence interval for $\theta$ of level $1-\alpha$:
+
+$$
+\left[ \overline{\textbf{X}} + \sqrt{\frac{Sxx}{n(n-1)}} t_{\alpha/2}, \; \overline{\textbf{X}} - \sqrt{\frac{Sxx}{n(n-1)}} t_{\alpha / 2} \right]
+$$
+
+Here:
+
+$t_\alpha$ - $\alpha$ quantile of t-Student distribution with $n-1$ degrees of freedom ($\mathcal{T_{n-1}}$)
+
+## Simulations:
+
+```{r}
+run_simulation_trial <- function(n, confidence, theta, lambda, m_reps, ci_checker_func) {
+  results_matrix <- matrix(0, nrow = m_reps, ncol = 2)
+  
+  for (i in 1:m_reps) {
+    x <- rexp(n, rate = lambda)
+    
+    results_matrix[i, ] <- ci_checker_func(x, theta, confidence)
+  }
+  
+  avg_length <- mean(results_matrix[, 1])
+  est_coverage_prob <- mean(results_matrix[, 2])
+  
+  return(list(
+    avg_length = round(avg_length, 4),
+    est_coverage_prob = round(est_coverage_prob, 4)
+  ))
+}
+
+
+run_all_simulations_by_m <- function(theta, n_values, m_values, confidences, ci_checker_func) {
+  lambda <- 1 / theta
+  
+  all_m_results <- list()
+  
+  for (m_reps in m_values) {
+    
+    prob_table <- matrix(NA, nrow = length(n_values), ncol = length(alphas),
+                         dimnames = list(paste0("n=", n_values), paste0("confidence=", confidences, "__")))
+    length_table <- matrix(NA, nrow = length(n_values), ncol = length(alphas),
+                           dimnames = list(paste0("n=", n_values), paste0("confidence=", confidences, "__")))
+    
+    for (i in 1:length(n_values)) {
+      n <- n_values[i]
+      
+      for (j in 1:length(confidences)) {
+        confidence <- confidences[j]
+        
+        trial_results <- run_simulation_trial(n, confidence, theta, lambda, m_reps, ci_checker_func)
+      
+        prob_table[i, j] <- trial_results$est_coverage_prob
+        length_table[i, j] <- trial_results$avg_length
+      }
+    }
+    
+    all_m_results[[paste0("m=", m_reps)]] <- list(
+      coverage_table = prob_table,
+      length_table = length_table
+    )
+  }
+  
+  return(all_m_results)
+}
+```
+
+```{r}
+ci_check_chi2 <- function(sample_x, theta, confidence) {
+  
+  alpha = 1 - confidence
+  x_bar <- mean(sample_x)
+  n <- length(sample_x)
+  
+  q_low <- alpha / 2
+  q_high <- 1 - alpha / 2
+  
+  chi_low_quant <- qchisq(q_low, df = 2 * n)
+  chi_high_quant <- qchisq(q_high, df = 2 * n)
+  
+  ci_low <- 2 * n * x_bar / chi_high_quant
+  ci_high <- 2 * n * x_bar / chi_low_quant
+  
+  contains_theta <- (ci_low <= theta) && (theta <= ci_high)
+  ci_length <- ci_high - ci_low
+  
+  return(c(ci_length, as.numeric(contains_theta)))
+}
+
+
+ci_check_snormal <- function(sample_x, theta, confidence) {
+  
+  alpha = (confidence + 1)/2
+  x_bar <- mean(sample_x)
+  n <- length(sample_x)
+  
+  z_a_quant <- qnorm(alpha, mean=0, sd=1)
+  
+  ci_low <- x_bar / (1 + z_a_quant / sqrt(n))
+  ci_high <- x_bar / (1 - z_a_quant / sqrt(n))
+  
+  contains_theta <- (ci_low <= theta) && (theta <= ci_high)
+  ci_length <- ci_high - ci_low
+  
+  return(c(ci_length, as.numeric(contains_theta)))
+}
+
+
+ci_check_tstudent <- function(sample_x, theta, confidence) {
+  
+  alpha = 1 - confidence
+  x_bar <- mean(sample_x)
+  sample_sd <- sd(sample_x)
+  n <- length(sample_x)
+  
+  tstud_quant <- qt(alpha/2, df = n-1)
+  
+  ci_low <- x_bar + (sample_sd / sqrt(n)) * tstud_quant
+  ci_high <- x_bar - (sample_sd / sqrt(n)) * tstud_quant
+  
+  contains_theta <- (ci_low <= theta) && (theta <= ci_high)
+  ci_length <- ci_high - ci_low
+  
+  return(c(ci_length, as.numeric(contains_theta)))
+}
+```
+
+```{r}
+theta <- id/10 # =1
+n_values <- c(10, 100, 1000, 10000)
+m_values <- c(10, 100, 1000)
+confidences <- c(0.90, 0.95, 0.99)
+```
+
+```{r}
+simulation_results_chi2 <- run_all_simulations_by_m(theta, n_values, m_values, confidences, ci_check_chi2)
+simulation_results_snormal <- run_all_simulations_by_m(theta, n_values, m_values, confidences, ci_check_snormal)
+simulation_results_tstudent <- run_all_simulations_by_m(theta, n_values, m_values, confidences, ci_check_tstudent)
+```
+
+### Estimated confidences of the intervals
+
+#### CI using Chi-squared distributed statistic
+
+```{r}
+for (m_label in names(simulation_results_chi2)) {
+  res <- simulation_results_chi2[[m_label]]
+  
+  print(as.data.frame(res$coverage_table))
+}
+```
+
+#### CI using standart normal distributed statistic
+
+```{r}
+for (m_label in names(simulation_results_snormal)) {
+  res <- simulation_results_snormal[[m_label]]
+  
+  print(as.data.frame(res$coverage_table))
+}
+```
+
+#### CI using t-student distributed statistic
+
+```{r}
+for (m_label in names(simulation_results_tstudent)) {
+  res <- simulation_results_tstudent[[m_label]]
+  
+  print(as.data.frame(res$coverage_table))
+}
+```
+
+### Lengths of the intervals
+
+#### CI using Chi-squared distributed statistic
+
+```{r}
+for (m_label in names(simulation_results_chi2)) {
+  res <- simulation_results_chi2[[m_label]]
+  
+  print(as.data.frame(res$length_table))
+}
+```
+
+#### CI using standart normal distributed statistic
+
+```{r}
+for (m_label in names(simulation_results_snormal)) {
+  res <- simulation_results_snormal[[m_label]]
+  
+  print(as.data.frame(res$length_table))
+}
+```
+
+#### CI using t-student distributed statistic
+
+```{r}
+for (m_label in names(simulation_results_tstudent)) {
+  res <- simulation_results_tstudent[[m_label]]
+  
+  print(as.data.frame(res$length_table))
+}
+```
+In the tests each dataframe correspond to different number of repetitions of the test ($m$): $10, 100, 100$
+
+## Results
+In this task 4 methods of creating confidence intervals for estimating mean of the exponentially distributed random variables was tested. Also their confidence was estimated with tests, length was found too. Tests was conducted with different number of repeats ($m$), number of samples for each trial ($n$) and different confidence levels.
+
+First thing which we have noticed is that when $m$ increases values of the estimated confidence become closer to expected values due to LLN. The same is observed when $n$ increases.
+
+For all methods of estimating CI for large $n$ and $m$ values of the confidence are close to the expected theoretical values what indicates that CIs was derived correctly.
+
+Also the larger $n$ becomes the smaller are lengths of the intervals. This happens because bounds of all 3 intervals contain division by $n$ so with increasing $n$ they become closer to the real value of the parameter. In simple words the greater sample the better we can estimate parameter. Also intervals with greater confidence have greater lengths since longer length is required to estimate parameter with better precision.
+
+
 
 # Task 2
 
