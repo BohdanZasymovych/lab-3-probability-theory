@@ -17,14 +17,15 @@ id <- 10
 
 # Task 1
 
-## 1)
+### **Note**:
+
+**In all derivations quantiles are defined to have next property** $P(X < q_{\alpha}) = \alpha$
 
 $$
-\begin{align}
-  &\theta = 1\newline
-  &\lambda = \frac{1}{\theta} = 1
-\end{align}
+\lambda = \frac{1}{\theta}
 $$
+
+## 1)
 
 $$X_i \sim \mathcal{E}(\lambda)$$
 
@@ -135,7 +136,6 @@ $$
 Confidence interval of confidence level $2 \alpha - 1$: $$
 \left[ \frac{\overline{\textbf{X}}}{1 + z_\alpha/\sqrt{n}}, \quad \frac{\overline{\textbf{X}}}{1 - z_\alpha/\sqrt{n}} \right]
 $$
-
 
 ## 4)
 
@@ -369,18 +369,26 @@ for (m_label in names(simulation_results_tstudent)) {
   print(as.data.frame(res$length_table))
 }
 ```
-In the tests each dataframe correspond to different number of repetitions of the test ($m$): $10, 100, 100$
+
+In the tests each dataframe correspond to different number of repetitions of the test ($m: 10,\, 100,\, 1000$)
+
+For each number of repetitions 12 tests were conducted varying number of samples ($n: 10,\, 100,\, 100,\, 10000$) and confidence levels of intervals (confidence: $0.9,\, 0.95,\, 0.99$).
 
 ## Results
-In this task 4 methods of creating confidence intervals for estimating mean of the exponentially distributed random variables was tested. Also their confidence was estimated with tests, length was found too. Tests was conducted with different number of repeats ($m$), number of samples for each trial ($n$) and different confidence levels.
 
-First thing which we have noticed is that when $m$ increases values of the estimated confidence become closer to expected values due to LLN. The same is observed when $n$ increases.
+In this task, four methods of creating confidence intervals (CIs) for estimating the mean of exponentially distributed random variables were tested. Their empirical confidence levels and interval lengths were also examined. Tests were conducted with different numbers of repetitions ($m$), sample sizes ($n$), and confidence levels.
 
-For all methods of estimating CI for large $n$ and $m$ values of the confidence are close to the expected theoretical values what indicates that CIs was derived correctly.
+The first observation is that when $m$ increases, the estimated confidence levels become closer to the theoretical values due to the LLN. The same effect appears when $n$ increases.
 
-Also the larger $n$ becomes the smaller are lengths of the intervals. This happens because bounds of all 3 intervals contain division by $n$ so with increasing $n$ they become closer to the real value of the parameter. In simple words the greater sample the better we can estimate parameter. Also intervals with greater confidence have greater lengths since longer length is required to estimate parameter with better precision.
+For all methods, when $n$ and $m$ are large, the empirical confidence levels are close to the expected theoretical values, indicating that the CIs were derived correctly.
 
+As $n$ increases, interval lengths decrease. This happens because the bounds of all three intervals include division by $n$, so increasing $n$ makes them converge toward the true parameter. In simple terms, larger samples give better parameter estimates. Intervals with higher confidence levels are longer because greater precision requires greater length.
 
+For very small samples ($n=10$), CIs based on the t-student statistic produce the shortest intervals for all confidence levels. CIs based on the chi-squared statistic are slightly longer. The method using the statistic approximated by the standard normal distribution (via the CLT) produces much longer intervals, and the difference grows with higher confidence levels.
+
+Although the estimated confidence levels are close to expectations, small deviations appear. For the CI using the chi-squared statistic, results almost match the theoretical value, since the statistic is distributed exactly as $\chi^2_{2n}$ without any approximation. For the other two methods, the normal approximation of the sample mean is imperfect. The high skewness of the exponential distribution leads to undercoverage, especially for small sample sizes.
+
+In conclusion, if the distribution is not exactly exponential, only the methods using the standard normal or t-student statistics can be applied. If the variance is unknown, only the method using the t-student statistic is valid. For small sample sizes, if the variance is known and the distribution is exactly exponential, the best method is the chi-squared–based CI because it gives relatively short intervals without undercoverage. For small samples where the variance is unknown or the variables are not exactly exponentially distributed, the CI using the t-student statistic should be preferred. For large enough sample sizes ($>30$), all methods yield nearly the same results (given whether the variance is known and whether the distribution is exponential). The method of creating CIs described in Task 2 cannot be used in practice, since the bounds depend on the unknown parameter $\theta$ that we are trying to estimate. To construct such an interval, we would need to know the value of $\theta$, which does not make any sense.
 
 # Task 2
 
