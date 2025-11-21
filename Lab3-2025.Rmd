@@ -256,6 +256,24 @@ ci_check_chi2 <- function(sample_x, theta, confidence) {
 }
 
 
+ci_check_snormal_dependent <- function(sample_x, theta, confidence) {
+  
+  alpha = (confidence + 1)/2
+  x_bar <- mean(sample_x)
+  n <- length(sample_x)
+  
+  z_a_quant <- qnorm(alpha, mean=0, sd=1)
+  
+  ci_low <- x_bar - (theta/sqrt(n)) * z_a_quant
+  ci_high <- x_bar + (theta/sqrt(n)) * z_a_quant
+  
+  contains_theta <- (ci_low <= theta) && (theta <= ci_high)
+  ci_length <- ci_high - ci_low
+  
+  return(c(ci_length, as.numeric(contains_theta)))
+}
+
+
 ci_check_snormal <- function(sample_x, theta, confidence) {
   
   alpha = (confidence + 1)/2
@@ -302,6 +320,7 @@ confidences <- c(0.90, 0.95, 0.99)
 
 ```{r}
 simulation_results_chi2 <- run_all_simulations_by_m(theta, n_values, m_values, confidences, ci_check_chi2)
+simulation_results_snormal_dependent <- run_all_simulations_by_m(theta, n_values, m_values, confidences, ci_check_snormal_dependent)
 simulation_results_snormal <- run_all_simulations_by_m(theta, n_values, m_values, confidences, ci_check_snormal)
 simulation_results_tstudent <- run_all_simulations_by_m(theta, n_values, m_values, confidences, ci_check_tstudent)
 ```
@@ -313,6 +332,16 @@ simulation_results_tstudent <- run_all_simulations_by_m(theta, n_values, m_value
 ```{r}
 for (m_label in names(simulation_results_chi2)) {
   res <- simulation_results_chi2[[m_label]]
+  
+  print(as.data.frame(res$coverage_table))
+}
+```
+
+#### CI using standart normal distributed statistic with bounds dependent on $\theta$
+
+```{r}
+for (m_label in names(simulation_results_snormal_dependent)) {
+  res <- simulation_results_snormal_dependent[[m_label]]
   
   print(as.data.frame(res$coverage_table))
 }
@@ -350,6 +379,16 @@ for (m_label in names(simulation_results_chi2)) {
 }
 ```
 
+#### CI using standart normal distributed statistic with bounds dependent on $\theta$
+
+```{r}
+for (m_label in names(simulation_results_snormal_dependent)) {
+  res <- simulation_results_snormal_dependent[[m_label]]
+  
+  print(as.data.frame(res$length_table))
+}
+```
+
 #### CI using standart normal distributed statistic
 
 ```{r}
@@ -382,13 +421,21 @@ The first observation is that when $m$ increases, the estimated confidence level
 
 For all methods, when $n$ and $m$ are large, the empirical confidence levels are close to the expected theoretical values, indicating that the CIs were derived correctly.
 
+The interval which has bounds dependent on the parameter $\theta$ has the smallest length of all constructed intervals for all values of $n$ and all confidence levels. Also, it can be easily shown that the length of this interval does not depend on the observed data and is constant for a fixed $n$ and confidence level:
+
+$$
+\text{LENGTH} = \overline{\textbf{X}} + \frac{\theta}{\sqrt{n}} z_\alpha - \left( \overline{\textbf{X}} - \frac{\theta}{\sqrt{n}} z_\alpha \right) = \frac{2\theta}{\sqrt{n}} z_\alpha
+$$
+
+Tests are consistent with this fact: for all tested numbers of repetitions ($m$), all lengths are exactly the same. Since this interval does not depend on the observed data and uses both the known variance and known parameter $\theta$, it has the smallest possible length due to eliminated uncertainty. However, it is impractical. We used the parameter $\theta$ to create this interval which estimates $\theta$ itself. In practice, there is no sense in estimating a parameter if the exact value is known. That is why this method won't be included in the further analysis.
+
 As $n$ increases, interval lengths decrease. This happens because the bounds of all three intervals include division by $n$, so increasing $n$ makes them converge toward the true parameter. In simple terms, larger samples give better parameter estimates. Intervals with higher confidence levels are longer because greater precision requires greater length.
 
 For very small samples ($n=10$), CIs based on the t-student statistic produce the shortest intervals for all confidence levels. CIs based on the chi-squared statistic are slightly longer. The method using the statistic approximated by the standard normal distribution (via the CLT) produces much longer intervals, and the difference grows with higher confidence levels.
 
 Although the estimated confidence levels are close to expectations, small deviations appear. For the CI using the chi-squared statistic, results almost match the theoretical value, since the statistic is distributed exactly as $\chi^2_{2n}$ without any approximation. For the other two methods, the normal approximation of the sample mean is imperfect. The high skewness of the exponential distribution leads to undercoverage, especially for small sample sizes.
 
-In conclusion, if the distribution is not exactly exponential, only the methods using the standard normal or t-student statistics can be applied. If the variance is unknown, only the method using the t-student statistic is valid. For small sample sizes, if the variance is known and the distribution is exactly exponential, the best method is the chi-squared–based CI because it gives relatively short intervals without undercoverage. For small samples where the variance is unknown or the variables are not exactly exponentially distributed, the CI using the t-student statistic should be preferred. For large enough sample sizes ($>30$), all methods yield nearly the same results (given whether the variance is known and whether the distribution is exponential). The method of creating CIs described in Task 2 cannot be used in practice, since the bounds depend on the unknown parameter $\theta$ that we are trying to estimate. To construct such an interval, we would need to know the value of $\theta$, which does not make any sense.
+In conclusion, if the distribution is not exactly exponential, only the methods using the standard normal or t-student statistics can be applied. If the variance is unknown, only the method using the t-student statistic is valid. For small sample sizes, if the variance is known and the distribution is exactly exponential, the best method is the chi-squared–based CI because it gives relatively short intervals without undercoverage. For small samples where the variance is unknown or the variables are not exactly exponentially distributed, the CI using the t-student statistic should be preferred. For large enough sample sizes ($>30$), all methods yield nearly the same results (given whether the variance is known and whether the distribution is exponential).
 
 # Task 2
 
