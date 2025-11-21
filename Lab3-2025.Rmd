@@ -1,6 +1,6 @@
 ---
 title: 'P&S-2025: Lab assignment 3'
-author: "Bohdan Zasymovych, "
+author: "Bohdan Zasymovych, Arsenii Stratiuk, "
 output:
   html_document:
     df_print: paged
@@ -9,6 +9,8 @@ output:
 ### Work breakdown:
 
 -   Bohdan Zasymovych: Task 1
+
+-   Arsenii Stratiuk: Task 3
 
 ```{r}
 options(width = 500)
@@ -205,9 +207,9 @@ run_all_simulations_by_m <- function(theta, n_values, m_values, confidences, ci_
   
   for (m_reps in m_values) {
     
-    prob_table <- matrix(NA, nrow = length(n_values), ncol = length(alphas),
+    prob_table <- matrix(NA, nrow = length(n_values), ncol = length(confidences),
                          dimnames = list(paste0("n=", n_values), paste0("confidence=", confidences, "__")))
-    length_table <- matrix(NA, nrow = length(n_values), ncol = length(alphas),
+    length_table <- matrix(NA, nrow = length(n_values), ncol = length(confidences),
                            dimnames = list(paste0("n=", n_values), paste0("confidence=", confidences, "__")))
     
     for (i in 1:length(n_values)) {
@@ -440,3 +442,130 @@ In conclusion, if the distribution is not exactly exponential, only the methods 
 # Task 2
 
 # Task 3
+
+### **Problem Formulation**
+
+We aim to compare two estimators for the population variance $\sigma^2$: the standard sample variance $\sigma^2_{n-1}$ (dividing by $n-1$) and the intuitive variance $\sigma^2_n$ (dividing by $n$). We will determine which one is "unbiased" (meaning its expected value equals the true parameter) by simulating samples from a Normal distribution with known variance $\sigma^2=4$ and calculating the bias for different sample sizes $n$.
+
+### **R Code**
+
+```{r}
+# set seed for reproducibility (team id 10)
+set.seed(10)
+
+# parameters
+mu <- 10
+sigma_sq <- 4
+m <- 10000  # number of repetitions to estimate expected value
+ns <- c(10, 50, 100, 1000) # sample sizes
+
+# vectors to store bias results
+bias_n <- numeric(length(ns))
+bias_n_minus_1 <- numeric(length(ns))
+
+# setup for plotting
+par(mfrow=c(2,2)) 
+
+for (i in 1:length(ns)) {
+  n <- ns[i]
+  
+  # generate m samples of size n (matrix with n rows, m cols)
+  samples <- matrix(rnorm(n * m, mean = mu, sd = sqrt(sigma_sq)), nrow = n)
+  
+  # calculate standard unbiased variance (dividing by n-1)
+  vars_unbiased <- apply(samples, 2, var)
+  
+  # calculate biased variance (dividing by n)
+  # recover sum of squares by multiplying by (n-1), then divide by n
+  vars_biased <- vars_unbiased * (n - 1) / n
+  
+  # calculate bias: mean of estimates minus true sigma_sq
+  bias_n_minus_1[i] <- mean(vars_unbiased) - sigma_sq
+  bias_n[i] <- mean(vars_biased) - sigma_sq
+  
+  # determine range to fit both histograms
+  x_min <- min(c(vars_unbiased, vars_biased))
+  x_max <- max(c(vars_unbiased, vars_biased))
+  
+  # plot unbiased (blue, transparent)
+  hist(vars_unbiased, breaks=30, prob=TRUE, 
+       col=rgb(0, 0, 1, 0.4), border="white",
+       xlim=c(x_min, x_max),
+       main=paste("Variance Estimators (n =", n, ")"), 
+       xlab="Variance Estimate")
+  
+  # plot biased (red, transparent)
+  hist(vars_biased, breaks=30, prob=TRUE, 
+       col=rgb(1, 0, 0, 0.4), border="white", add=TRUE)
+  
+  # add vertical line for true variance
+  abline(v = sigma_sq, col="black", lwd=2, lty=2)
+  
+  # add legend
+  if (i == 1) { # Only add legend to the first plot to save space
+    legend("topright", legend=c("Unbiased (n-1)", "Biased (n)", "True Sigma^2"), 
+           fill=c(rgb(0,0,1,0.4), rgb(1,0,0,0.4), NA), 
+           lty=c(NA, NA, 2), lwd=c(NA, NA, 2), border="white", bty="n", cex=0.8)
+  }
+}
+
+# reset plotting layout
+par(mfrow=c(1,1))
+
+# output results table
+results <- data.frame(
+  sample_size = ns,
+  bias_biased_n = bias_n,
+  bias_unbiased_n_1 = bias_n_minus_1
+)
+
+print(results)
+```
+
+**Visual Analysis:**
+
+The histograms visually demonstrate the concept of estimator bias:
+
+**At $n=10$ (Top Left):** There is a clear separation. The **Red distribution (Biased)** is shifted to the left of the true value (Dashed Line at 4). This confirms that dividing by $n$ systematically underestimates the variance. The **Blue distribution (Unbiased)** is centered correctly on the dashed line.
+
+**At $n=1000$ (Bottom Right):** The distributions overlap almost perfectly. This confirms that as sample size increases, the difference between dividing by $n$ and $n-1$ becomes negligible, and the bias vanishes.
+
+### **Justification (Theoretical Derivation)**
+
+**Derivation of Expectations (Task e):**
+
+Let $SS = \sum_{i=1}^{n}(X_i - \overline{X})^2$.
+
+We know that $\sum_{i=1}^{n}(X_i - \overline{X})^2 = \sum_{i=1}^{n}(X_i - \mu)^2 - n(\overline{X} - \mu)^2$.
+
+Taking the expectation:
+
+$$E[SS] = \sum_{i=1}^{n}E[(X_i - \mu)^2] - nE[(\overline{X} - \mu)^2]$$
+
+Since $E[(X_i - \mu)^2] = \sigma^2$ and $E[(\overline{X} - \mu)^2] = Var(\overline{X}) = \sigma^2/n$:
+
+$$E[SS] = n\sigma^2 - n(\frac{\sigma^2}{n}) = n\sigma^2 - \sigma^2 = (n-1)\sigma^2$$
+
+**Proof of Unbiasedness (Task f):**
+
+**For $\sigma^2_{n-1}$:**
+
+$$E[\sigma^2_{n-1}] = E\left[\frac{1}{n-1} SS\right] = \frac{1}{n-1} (n-1)\sigma^2 = \sigma^2$$
+
+Since $E[\sigma^2_{n-1}] = \sigma^2$, this estimator is **unbiased**.
+
+**For $\sigma^2_{n}$:**
+
+$$E[\sigma^2_{n}] = E\left[\frac{1}{n} SS\right] = \frac{1}{n} (n-1)\sigma^2 = \frac{n-1}{n}\sigma^2$$
+
+Since $E[\sigma^2_{n}] \neq \sigma^2$, this estimator is **biased**.
+
+### **Conclusion**
+
+**Reliability and Common Sense (Tasks d & g):**
+
+**Bias Analysis:** The simulation results confirm the theory. The bias for $\sigma^2_{n-1}$ is extremely close to 0 for all $n$ (random fluctuation). The bias for $\sigma^2_n$ is negative (approx $-0.4$ for $n=10$), meaning it underestimates the population variance.
+
+**Effect of $n$:** The theoretical bias of $\sigma^2_n$ is $\sigma^2(\frac{n-1}{n} - 1) = -\frac{\sigma^2}{n}$. As $n$ increases (for example, to $n=1000$), this term approaches 0.
+
+**Agreement:** Practical results agree with common sense expectations; for small sample sizes, dividing by $n$ instead of $n-1$ significantly underestimates the spread of the data because the sample mean is used instead of the true population mean, which minimizes the sum of squares.
