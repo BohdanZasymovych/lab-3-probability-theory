@@ -441,6 +441,275 @@ In conclusion, if the distribution is not exactly exponential, only the methods 
 
 # Task 2
 
+Problem 2 (1 pt). Repeat parts (2)–(4) of Problem 1 (with corresponding amendments) for a Poisson distribution P($\theta$). Task and Directions remain the same; in other words, you have to check that confidence intervals constructed there contain the parameter $\theta$ with prescribed probability.
+
+Directions:\
+- use $\theta$ = id num/10 and α = 0.1; 0.05; 0.01; - vary the sample sizes n and the number m of repetitions to estimate the probability and comment on the results.
+
+```{r}
+id <- 10
+
+theta <- id/10 # = 1/lambda
+n_vals <- c(10, 100, 1000, 10000) #sample sizes
+m <- 10000 #repetitions
+alpha_vals <- c(0.1, 0.05, 0.01)
+```
+
+## (a) Confidence intervals
+
+verify that the confidence intervals of level 1 − α constructed via 2.–4. above contain the parameter θ = 1/λ approx. 100(1 − α)% of times
+
+### (2)
+
+$X_1, X_2, \ldots, X_n$ have a Poisson distribution $\text{Pois}(\theta)$.\
+For a Poisson random variable, $$
+E[X_i] = \theta, \quad \operatorname{Var}(X_i) = \theta.
+$$ Confidence interval for theta can be formed using the normal approximation for $\bar{X}$$$
+\bar{X} \sim N\!\left(\mu = \theta, \, \sigma^2 = \frac{\theta}{n}\right).
+$$
+
+We standardize the sample mean: $$
+Z = \frac{\bar{X} - \theta}{\sqrt{\theta / n}} 
+     = \frac{\sqrt{n}(\bar{X} - \theta)}{\sqrt{\theta}}
+     \sim N(0,1).
+$$
+
+$$
+P(|Z| \le z_{1 - \alpha/2}) = 1 - \alpha.
+$$ $$
+P\!\left(
+\left| \frac{\sqrt{n}(\bar{X} - \theta)}{\sqrt{\theta}} \right|
+\le z_{1 - \alpha/2}
+\right) = 1 - \alpha.
+$$
+
+$$
+P\!\left(
+|\bar{X} - \theta| \le 
+z_{1 - \alpha/2} \frac{\sqrt{\theta}}{\sqrt{n}}
+\right) = 1 - \alpha.
+$$
+
+Confidence interval of confidence level $1-\alpha$:
+
+$$
+{
+\theta \in 
+\left[
+\bar{X} - z_{1-\alpha/2}\frac{\sqrt{\theta}}{\sqrt{n}},
+\;
+\bar{X} + z_{1-\alpha/2}\frac{\sqrt{\theta}}{\sqrt{n}}
+\right].
+}
+$$
+
+### (3)
+
+This interval assumes that the population variance = $\theta$ is known. In practice, $\theta$ is unknown, so we solve the double inequality$$
+|\bar{X} - \theta| \le z_{1-\alpha/2}\frac{\sqrt{\theta}}{\sqrt{n}},
+$$ $$
+(\bar{X} - \theta)^2 \le z_{1-\alpha/2}^2 \frac{\theta}{n}.
+$$
+
+$$
+\bar{X}^2 - 2\bar{X}\theta + \theta^2 
+   \le z_{1-\alpha/2}^2 \frac{\theta}{n}.
+$$
+
+$$
+\theta^2 
+   - \theta\!\left( 2\bar{X} + \frac{z_{1-\alpha/2}^2}{n} \right) 
+   + \bar{X}^2 \le 0.
+$$
+
+Replacement $b = 2\bar{X} + \frac{z_{1-\alpha/2}^2}{n}$ , $c = \bar{X}^2$ $$
+\theta^2 - b\theta + c \le 0,
+$$
+
+$$
+\theta_{1,2} = 
+\frac{b \pm \sqrt{b^2 - 4c}}{2}.
+$$
+
+$$
+\theta_{1,2} = 
+\frac{1}{2}
+\left[
+  \left( 2\bar{X} + \frac{z_{1-\alpha/2}^2}{n} \right)
+  \pm
+  \sqrt{
+    \left( 2\bar{X} + \frac{z_{1-\alpha/2}^2}{n} \right)^2
+    - 4\bar{X}^2
+  }
+\right].
+$$
+
+$$
+\left( 2\bar{X} + \frac{z_{1-\alpha/2}^2}{n} \right)^2 - 4\bar{X}^2
+= \frac{4z_{1-\alpha/2}^2\bar{X}}{n} + \frac{z_{1-\alpha/2}^4}{n^2}.
+$$
+
+Confidence interval of confidence level $1-\alpha$:
+
+$$
+{
+\theta \in 
+\left[
+\frac{1}{2}
+\left(
+  2\bar{X} + \frac{z_{1-\alpha/2}^2}{n}
+  \pm
+  z_{1-\alpha/2}
+  \sqrt{\frac{4\bar{X}}{n} + \frac{z_{1-\alpha/2}^2}{n^2}}\right)
+\right]
+}
+$$
+
+### (4)
+
+The interval in (2) relied on the $\theta$. To construct a practical confidence interval that does not depend on the unknown $\theta$, we can replace the population variance by its sample estimate.$$
+s^2 = \widehat{\sigma^2} = \widehat{\theta} = \bar{X},
+$$ $$
+s = \sqrt{\bar{X}}.
+$$
+
+Approximate the distribution using Student distribution: $$
+T = \frac{\sqrt{n}(\bar{X} - \theta)}{s} \approx t_{n-1}
+$$ $$
+P\!\left(
+|T| \le t_{1-\alpha/2,\,n-1}
+\right) = 1 - \alpha
+$$ $$
+P\!\left(
+\left| \frac{\sqrt{n}(\bar{X} - \theta)}{s} \right|
+  \le t_{1-\alpha/2,\,n-1}
+\right) = 1 - \alpha
+$$
+
+$$
+P\!\left(
+|\bar{X} - \theta|
+  \le t_{1-\alpha/2,\,n-1} \frac{s}{\sqrt{n}}
+\right) = 1 - \alpha
+$$
+
+$$
+s = \sqrt{\bar{X}}.
+$$
+
+Confidence interval of confidence level $1-\alpha$: $$
+{
+\theta \in 
+\left[
+  \bar{X}
+  - t_{1-\alpha/2,\,n-1}\frac{\sqrt{\bar{X}}}{\sqrt{n}},
+\;
+  \bar{X}
+  + t_{1-\alpha/2,\,n-1}\frac{\sqrt{\bar{X}}}{\sqrt{n}}
+\right]
+}
+$$
+
+```{r}
+problem2 <- function(alpha2, n2, m2, theta2){
+  z <- qnorm(1 - alpha2/2, mean = 0, sd = 1) # z-quantile N(0, 1)
+  t <- qt(1 - alpha2/2, df = n2-1) # t-quantile for Student dist. with param 1 - alpha/2
+  
+  cover2 <- cover3 <- cover4 <- 0 #coverage
+  len2 <- len3 <- len4 <- 0 #length
+  
+    for (i in 1:m2){
+      x <- rpois(n2, theta2) # random sample from Poi(theta), size n
+      x_bar <- mean(x)
+
+      #bounds using standart normal dist. with known variance
+      up2 <- x_bar + z * sqrt(theta2/n2)
+      low2 <- x_bar - z * sqrt(theta2/n2)
+      if (low2 <= theta2 && theta2 <= up2){
+        cover2 <- cover2 + 1
+      }
+      len2 <- len2 + (up2-low2) # next devide by m, so we'll have mean of len
+      
+      #bounds using standart normal dist. with unknown variance
+      up3 <- (1/2) * ((2*x_bar) + ((z^2)/n2) + z * sqrt((4*x_bar/n2) + ((z^2)/(n2^2))) )
+      low3 <- (1/2) * ((2*x_bar) + ((z^2)/n2) - z * sqrt((4*x_bar/n2) + ((z^2)/(n2^2))) )
+      if (low3 <= theta2 && theta2 <= up3){
+        cover3 <- cover3 + 1
+      }
+      len3 <- len3 + (up3-low3)
+      
+      #bounds using student dist. with unknown variance
+      up4 <- x_bar + t * sqrt(x_bar/n2)
+      low4 <- x_bar - t * sqrt(x_bar/n2)
+      if (low4 <= theta2 && theta2 <= up4){
+        cover4 <- cover4 + 1
+      }
+      len4 <- len4 + (up4-low4)
+      
+    }
+  data.frame(
+    alpha = alpha2,
+    n = n2,
+    cover2 = cover2/m2,
+    cover3 = cover3/m2,
+    cover4 = cover4/m2,
+    len2 = len2/m2,
+    len3 = len3/m2,
+    len4 = len4/m2
+  )
+}
+
+res <- data.frame()
+for (alpha in alpha_vals){ # for confidence levels = (0.1, 0.05, 0.01)
+   for (n in n_vals){ # different sample sizes = (10, 100, 1000, 10000)
+    curr <- problem2(alpha, n, m, theta)
+    res <- rbind(res, curr)
+  }
+}
+print(res)
+```
+
+## (b) compare their precision (lengths)
+
+The average lengths of the confidence intervals (len2, len3, len4) show the expected statistical behavior.
+
+-   The **interval length decreases as the sample size n increases**.\
+    This happens because the standard error of the sample mean is proportional to $\theta/\sqrt{n}$, $\theta = 1$ so $\bar X = 1/\sqrt{n}$.\
+    Larger samples provide more information, so the estimation of $\theta$ becomes more precise.
+
+-   The **interval length increases as the confidence level** (1 − $\alpha$) **increases**.\
+    Smaller $\alpha$ (0.01 instead of 0.1) corresponds to a higher z- or t‑quantile, which makes the interval wider, so get higher coverage probability.
+
+-   **(2)** (known $\theta$) gives the **shortest intervals**, because it assumes we know the true variance.\
+
+-   **(3)** gives a bit **wider intervals**, since it includes estimation uncertainty.\
+
+-   **(4)** is the **widest**, because the t‑distribution has bigger tails than the normal, especially for small sample sizes.
+
+In summary,\
+Interval length decreases with n, increases with confidence level, depends on true variance or variance estimation.
+
+## (c) recommendation
+
+give your recommendation as to which of the four methods is the best one and explain your decision
+
+Based on the analysis results and accessibility in use, best method to form confidence intervals is **method (3)**.
+
+1.  Method (3) achieves coverage probabilities that are closest to the nominal confidence levels (1 − $\alpha$), both for small and large samples. It does not underestimate or overestimate the true coverage significantly.
+2.  It doesn't use $\theta$, which is usually unknown, by replacing it with estimated value - sample mean.
+3.  It's average length of intervals is only slightly larger than Method (2), but clearly shorter than in Method (4).
+4.  It provides the best precision for small sample sizes.
+
+## Symmary of 2 Task
+
+This task tests several ways of forming confidence intervals for the mean parameter $\theta$ of a Poisson distribution. Approximations used were: the normal interval with known variance, an interval that removes dependence on $\theta$, and a t‑based interval using the sample variance estimate. Their performance was done with $\theta = 1$, confidence levels $(1 - \alpha) = 0.9, 0.95, 0.99$, and sample sizes ranging from 10 to 10,000.
+
+The simulations show that all three procedures produce empirical coverage close to the intended confidence level, especially as the sample size increases. For small samples, minor deviations occur due to the limited accuracy of the normal approximation, but they rapidly disappear with larger n. The behavior of interval lengths follows theoretical expectations: intervals become shorter as the sample size grows and they expand as the confidence level increases because of larger critical values.
+
+In comparing the methods, the interval with z-quantile (standart normal distribution) based on known variance is the narrowest but not practically usable since the true parameter must be known. The second method's interval with z-quantile performs almost identically in coverage, while avoiding dependence on unknown quantities, and its average length is only slightly greater. The t‑based method produces the widest intervals, particularly for small n, reflecting the greater uncertainty accounted for by the heavier tails of the Student distribution.
+
+Overall, the results align with theoretical predictions and confirm that increasing the sample size improves the precision of all interval estimates. Among the three tested methods, the second normal interval offers the most reasonable trade‑off between reliability and efficiency. It is easy to compute, does not require knowledge of the true variance, and maintains coverage probabilities near the nominal values, making it the preferred method for practical applications involving Poisson data.
+
 # Task 3
 
 ### **Problem Formulation**
