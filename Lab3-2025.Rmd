@@ -1,6 +1,6 @@
 ---
 title: 'P&S-2025: Lab assignment 3'
-author: "Bohdan Zasymovych, Arsenii Stratiuk, "
+author: "Bohdan Zasymovych, Arsenii Stratiuk, Yustyna Hayevska"
 output:
   html_document:
     df_print: paged
@@ -9,6 +9,8 @@ output:
 ### Work breakdown:
 
 -   Bohdan Zasymovych: Task 1
+
+-   Yustyna Hayevska: Task 2
 
 -   Arsenii Stratiuk: Task 3
 
@@ -448,6 +450,7 @@ Directions:\
 
 ```{r}
 id <- 10
+set.seed(id)
 
 theta <- id/10 # = 1/lambda
 n_vals <- c(10, 100, 1000, 10000) #sample sizes
