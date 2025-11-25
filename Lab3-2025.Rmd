@@ -60,7 +60,7 @@ So $T$ has Chi-squared distribution with $2n$ degrees of freedom ($T \sim \chi^2
 $$
 \begin{align}
 1 - \alpha &= P\left(x_{\alpha/2} \le T \le x_{1-\alpha/2}\right) =
-P\left(x_{\alpha/2} \le 2 \alpha W \le x_{1-\alpha/2}\right) \newline
+P\left(x_{\alpha/2} \le 2 \lambda W \le x_{1-\alpha/2}\right) \newline
 &= P\left(x_{\alpha/2} \le \frac{2W}{\theta} \le x_{1-\alpha/2}\right)
 = P\left(\frac{1}{x_{1-\alpha/2}} \le \frac{\theta}{2W} \le \frac{1}{x_{\alpha/2}}\right) \newline
 &= P\left(\frac{2W}{x_{1-\alpha/2}} \le \theta \le \frac{2W}{x_{\alpha/2}}\right)
@@ -798,9 +798,9 @@ print(results)
 
 The histograms visually demonstrate the concept of estimator bias:
 
-**At $n=10$ (Top Left):** There is a clear separation. The **Red distribution (Biased)** is shifted to the left of the true value (Dashed Line at 4). This confirms that dividing by $n$ systematically underestimates the variance. The **Blue distribution (Unbiased)** is centered correctly on the dashed line.
+**At** $n=10$ (Top Left): There is a clear separation. The **Red distribution (Biased)** is shifted to the left of the true value (Dashed Line at 4). This confirms that dividing by $n$ systematically underestimates the variance. The **Blue distribution (Unbiased)** is centered correctly on the dashed line.
 
-**At $n=1000$ (Bottom Right):** The distributions overlap almost perfectly. This confirms that as sample size increases, the difference between dividing by $n$ and $n-1$ becomes negligible, and the bias vanishes.
+**At** $n=1000$ (Bottom Right): The distributions overlap almost perfectly. This confirms that as sample size increases, the difference between dividing by $n$ and $n-1$ becomes negligible, and the bias vanishes.
 
 ### **Justification (Theoretical Derivation)**
 
@@ -820,13 +820,13 @@ $$E[SS] = n\sigma^2 - n(\frac{\sigma^2}{n}) = n\sigma^2 - \sigma^2 = (n-1)\sigma
 
 **Proof of Unbiasedness (Task f):**
 
-**For $\sigma^2_{n-1}$:**
+**For** $\sigma^2_{n-1}$:
 
 $$E[\sigma^2_{n-1}] = E\left[\frac{1}{n-1} SS\right] = \frac{1}{n-1} (n-1)\sigma^2 = \sigma^2$$
 
 Since $E[\sigma^2_{n-1}] = \sigma^2$, this estimator is **unbiased**.
 
-**For $\sigma^2_{n}$:**
+**For** $\sigma^2_{n}$:
 
 $$E[\sigma^2_{n}] = E\left[\frac{1}{n} SS\right] = \frac{1}{n} (n-1)\sigma^2 = \frac{n-1}{n}\sigma^2$$
 
@@ -838,6 +838,6 @@ Since $E[\sigma^2_{n}] \neq \sigma^2$, this estimator is **biased**.
 
 **Bias Analysis:** The simulation results confirm the theory. The bias for $\sigma^2_{n-1}$ is extremely close to 0 for all $n$ (random fluctuation). The bias for $\sigma^2_n$ is negative (approx $-0.4$ for $n=10$), meaning it underestimates the population variance.
 
-**Effect of $n$:** The theoretical bias of $\sigma^2_n$ is $\sigma^2(\frac{n-1}{n} - 1) = -\frac{\sigma^2}{n}$. As $n$ increases (for example, to $n=1000$), this term approaches 0.
+**Effect of** $n$: The theoretical bias of $\sigma^2_n$ is $\sigma^2(\frac{n-1}{n} - 1) = -\frac{\sigma^2}{n}$. As $n$ increases (for example, to $n=1000$), this term approaches 0.
 
 **Agreement:** Practical results agree with common sense expectations; for small sample sizes, dividing by $n$ instead of $n-1$ significantly underestimates the spread of the data because the sample mean is used instead of the true population mean, which minimizes the sum of squares.
